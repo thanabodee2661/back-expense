@@ -3,12 +3,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var loginRouter = require('./routes/login');
-
+var fs = require('fs');
+var passport = require('./src/service/passport');4
+var router = express.Router();
 var app = express();
+
+var pathService = './routes';
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -16,21 +16,33 @@ app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/login', loginRouter);
+fs.readdir(pathService, (err, files) => {
+  files.forEach((file) => {
+    const extension = path.extname(file)
+    const fileName = path.basename(file, extension);
+    if (fileName !== 'auth') {
+      router.use(`/${fileName}`, passport.authenticate('jwt', {session: false}), require(`${pathService}/${fileName}`));
+    } else {
+      router.use(`/${fileName}`, require(`${pathService}/${fileName}`));
+    }
+  });
+});
+
+app.use(router);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
