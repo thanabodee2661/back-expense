@@ -4,7 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var fs = require('fs');
-var passport = require('./src/service/passport');4
+var cors = require('cors')
+var passport = require('./src/service/passport');
 var router = express.Router();
 var app = express();
 
@@ -14,6 +15,7 @@ var pathService = './routes';
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
@@ -27,7 +29,7 @@ fs.readdir(pathService, (err, files) => {
     const extension = path.extname(file)
     const fileName = path.basename(file, extension);
     if (fileName !== 'auth') {
-      router.use(`/${fileName}`, passport.authenticate('jwt', {session: false}), require(`${pathService}/${fileName}`));
+      router.use(`/${fileName}`, passport.authentication, require(`${pathService}/${fileName}`));
     } else {
       router.use(`/${fileName}`, require(`${pathService}/${fileName}`));
     }

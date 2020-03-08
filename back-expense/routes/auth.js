@@ -4,7 +4,8 @@ var loginService = require('../src/service/auth');
 
 /* GET users listing. */
 router.post('/login', async (req, res, next) => {
-  return res.json(await loginService.checkUserInDb(req.body.username, req.body.password));
+  console.log(req.body)
+  return res.json(await loginService.checkUserAndPassInDb(req.body.username, req.body.password));
 });
 
 router.get('/logout', (req, res, nest) => {
