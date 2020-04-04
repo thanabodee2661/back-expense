@@ -3,23 +3,38 @@ var authDao = require('../dao/authDao');
 var secretKey = 'namtanGG';
 
 var fn = {
-    generateToken(username) {
-        return jwt.sign({
-            username: username
-        }, secretKey);
+    generateToken(userDetail) {
+        return jwt.sign({...userDetail}, secretKey);
     },
 
-    async checkUserInDb(username, password) {
-        var results = await authDao.login(username, password);
+    async checkUserAndPassInDb(username, password) {
+        const results = await authDao.checkUserAndPass(username, password);
         if(results.length > 0) {
             return {
-                token: this.generateToken(results[0].username),
+                token: this.generateToken(results[0]),
                 status: 200
             };
         } else {
             return {
-                message: 'username or password is wrong',
+                token: null,
                 status: 200
+            };
+        }
+    },
+
+    async checkUserInDb(userId) {
+        var results = await authDao.checkUser(userId);
+        if(results.length > 0) {
+            return {
+                result: true,
+                status: 200,
+                message: 'success'
+            };
+        } else {
+            return {
+                result: false,
+                status: 401,
+                message: 'user unauthorize'
             };
         }
     }
