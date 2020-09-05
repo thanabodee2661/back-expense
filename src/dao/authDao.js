@@ -2,7 +2,16 @@ var commonDao = require('./commonDao');
 
 var auth = {
     async checkUserAndPass(username, password) {
-        var sql = 'select * from users where username = ? and password = ?';
+        var sql =   'select ' + 
+                        'users_id as userId, ' +
+                        'username, ' +
+                        'firstname, ' +
+                        'lastname, ' +
+                        'email, ' + 
+                        'tel, ' +
+                        'status, ' +
+                        'create_date as createDate ' +
+                    'from users where username = ? and password = ?';
         var param = [];
         param.push(username);
         param.push(password);

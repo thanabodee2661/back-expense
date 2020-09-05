@@ -12,8 +12,11 @@ var common = {
     query(sql, param) {
         return new Promise((resolve, reject) => {
             conn.query(sql, param, (err, results, fields) => {
-                if (err) reject(err)
-                resolve(results);
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
             });
         });
     }
