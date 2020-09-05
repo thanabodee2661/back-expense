@@ -8,19 +8,23 @@ passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: "namtanGG"
 }, async (jwtPayload, done) => {
-    
-    const results = await authService.checkUserInDb(jwtPayload.users_id);
-    if (results.result) {
-        done(null, true);
-    } else {
-        done(null, false, results);
+    try {
+        const results = await authService.checkUserInDb(jwtPayload.userId);
+        if (results.result) {
+            done(null, true);
+        } else {
+            done(null, false, results);
+        }
+    } catch (err) {
+        done(err.message, false);
     }
 }));
 
 exports.authentication = (req, res, next) => {
     passport.authenticate('jwt', {session: false}, (err, result, info) => {
-        if (err) next(err);
-        if (!result) {
+        if (err){
+            res.status(500).json({message: err, status: 500})
+        } else if (!result) {
             res.status(401).json({message: info.message, status: info.status})
         } else {
             next();

@@ -6,6 +6,7 @@ var logger = require('morgan');
 var fs = require('fs');
 var cors = require('cors')
 var passport = require('./src/service/passport');
+var authService = require('./src/service/auth');
 var router = express.Router();
 var app = express();
 
@@ -23,6 +24,10 @@ app.use(express.urlencoded({
 }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use((req, res, next) => {
+  authService.setUserProfile(req);
+  next();
+});
 
 fs.readdir(pathService, (err, files) => {
   files.forEach((file) => {

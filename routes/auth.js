@@ -1,15 +1,16 @@
 var express = require('express');
 var router = express.Router();
-var loginService = require('../src/service/auth');
+var authService = require('../src/service/auth');
 
 /* GET users listing. */
 router.post('/login', async (req, res, next) => {
-  console.log(req.body)
-  return res.json(await loginService.checkUserAndPassInDb(req.body.username, req.body.password));
+  const jsonData = await authService.checkUserAndPassInDb(req.body.username, req.body.password);
+  return res.status(jsonData.status).json(jsonData);
 });
 
-router.get('/logout', (req, res, nest) => {
-
+router.get('/logout', (req, res, next) => {
+  // authService.getUserProfile();
+  return res.json(authService.getUserProfile());
 });
 
 module.exports = router;

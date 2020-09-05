@@ -26,6 +26,11 @@ const map = {
         } catch (e) {
             return null;
         }
+    },
+
+    ObjectToArray = (obj) => {
+        
+        Object.keys(obj).forEach()
     }
 }
 

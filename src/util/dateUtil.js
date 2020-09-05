@@ -9,13 +9,34 @@ const dateUtil = {
     getDateToString(value, format) {
         if (value instanceof Date) {
             const formatTemp = validate.isNotEmpty(format) ? format : 'DD-MM-YYYY';
-            return moment().format(formatTemp);
+            return moment(value).format(formatTemp);
         } else {
             return null;
         }
     },
 
-    getDateToNumber(value) {
+    getDateSql(value = this.now()) {
+        const formatDate = 'YYYY-MM-DD HH:mm:ss';
+        if (value instanceof Date) {
+            return moment(value).format(formatDate);
+        } else {
+            return null;
+        }
+    },
+
+    getDateSqlFromNumber(value = this.getDateToNumber()) {
+        const formatDate = 'YYYY-MM-DD HH:mm:ss';
+        if (!isNaN(value)) {
+            if (typeof(value) !== 'number') {
+                value = Number(value);
+            }
+            return moment(value).format(formatDate);
+        } else {
+            return null;
+        }
+    },
+
+    getDateToNumber(value = this.now()) {
         if (value instanceof Date) {
             return value.getTime();
         } else {
