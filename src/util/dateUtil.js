@@ -1,36 +1,41 @@
 const moment = require('moment');
 const validate = require('./validate');
 
+const formatDate = 'DD-MM-YYYY';
+const formatDateTimeSql = 'YYYY-MM-DD HH:mm:ss';
+
 const dateUtil = {
     now() {
         return new Date();
     },
 
-    getDateToString(value, format) {
+    getDateToString(value, format = formatDate) {
         if (value instanceof Date) {
-            const formatTemp = validate.isNotEmpty(format) ? format : 'DD-MM-YYYY';
-            return moment(value).format(formatTemp);
+            return moment(value).format(format);
+        } else if (!isNaN(value)) {
+            if (typeof(value) !== 'number') {
+                value = Number(value);
+            }
+            return moment(value).format(format);
         } else {
             return null;
         }
     },
 
     getDateSql(value = this.now()) {
-        const formatDate = 'YYYY-MM-DD HH:mm:ss';
         if (value instanceof Date) {
-            return moment(value).format(formatDate);
+            return moment(value).format(formatDateTimeSql);
         } else {
             return null;
         }
     },
 
     getDateSqlFromNumber(value = this.getDateToNumber()) {
-        const formatDate = 'YYYY-MM-DD HH:mm:ss';
         if (!isNaN(value)) {
             if (typeof(value) !== 'number') {
                 value = Number(value);
             }
-            return moment(value).format(formatDate);
+            return moment(value).format(formatDateTimeSql);
         } else {
             return null;
         }

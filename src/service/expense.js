@@ -37,6 +37,28 @@ var fn = {
             };
         }
     },
+
+    async getExpenseList(expenseDetail) {
+        try {
+            const userProfile = authService.getUserProfile();
+            const param = [];
+            param.push(userProfile.userId);
+            param.push(expenseDetail.expenseType);
+            param.push(dateUtil.getDateToString(expenseDetail.expenseDate));
+    
+            const results = await expenseDao.getExpenseList(param);
+            return {
+                status: 200,
+                content: results,
+                message: 'success'
+            };
+        } catch (err) {
+            return {
+                status: 500,
+                message: err.message
+            }
+        }
+    }
 };
 
 module.exports = fn;
