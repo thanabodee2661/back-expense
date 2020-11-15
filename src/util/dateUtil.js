@@ -13,7 +13,7 @@ const dateUtil = {
         if (value instanceof Date) {
             return moment(value).format(format);
         } else if (!isNaN(value)) {
-            if (typeof(value) !== 'number') {
+            if (typeof (value) !== 'number') {
                 value = Number(value);
             }
             return moment(value).format(format);
@@ -32,7 +32,7 @@ const dateUtil = {
 
     getDateSqlFromNumber(value = this.getDateToNumber()) {
         if (!isNaN(value)) {
-            if (typeof(value) !== 'number') {
+            if (typeof (value) !== 'number') {
                 value = Number(value);
             }
             return moment(value).format(formatDateTimeSql);
@@ -83,10 +83,9 @@ const dateUtil = {
     plusDate(date, value) {
         if (date instanceof Date) {
             if (!isNaN(value)) {
-                date.setDate(date.getDate + value)
-            } else {
-                return date;
+                date.setDate(date.getDate() + value)
             }
+            return date;
         } else {
             return null;
         }
@@ -95,10 +94,9 @@ const dateUtil = {
     plusMonth(date, value) {
         if (date instanceof Date) {
             if (!isNaN(value)) {
-                date.setMonth(date.getMonth + value)
-            } else {
-                return date;
+                date.setMonth(date.getMonth() + value)
             }
+            return date;
         } else {
             return null;
         }
@@ -107,50 +105,102 @@ const dateUtil = {
     plusYear(date, value) {
         if (date instanceof Date) {
             if (!isNaN(value)) {
-                date.setFullYear(date.getFullYear + value)
+                date.setFullYear(date.getFullYear() + value)
+            }
+            return date;
+        } else {
+            return null;
+        }
+    },
+
+    subtractDate(date, value) {
+        if (date instanceof Date) {
+            if (!isNaN(value)) {
+                date.setDate(date.getDate() - value)
+            }
+            return date;
+        } else {
+            return null;
+        }
+    },
+
+    subtractMonth(date, value) {
+        if (date instanceof Date) {
+            if (!isNaN(value)) {
+                date.setMonth(date.getMonth() - value)
+            }
+            return date;
+        } else {
+            return null;
+        }
+    },
+
+    subtractYear(date, value) {
+        if (date instanceof Date) {
+            if (!isNaN(value)) {
+                date.setFullYear(date.getFullYear() - value)
+            }
+            return date;
+        } else {
+            return null;
+        }
+    },
+
+    subtractDateFromDate(date1, date2) {
+        if (date1 instanceof Date && date2 instanceof Date) {
+            if (date1.getTime() >= date2.getTime()) {
+                return date1.getTime() - date2.getTime();
             } else {
-                return date;
+                return date2.getTime() - date1.getTime();
             }
         } else {
             return null;
         }
     },
 
-    divineDate(date, value) {
-        if (date instanceof Date) {
-            if (!isNaN(value)) {
-                date.setDate(date.getDate - value)
-            } else {
-                return date;
-            }
-        } else {
-            return null;
+    convertMilliToTimeLeftString(milliDate = 0) {
+        const milliDay = 24 * 60 * 60 * 1000;
+        const milliHr = milliDay / 24;
+        const milliMin = milliHr / 60;
+        const milliSec = milliMin / 60;
+        let obj = {
+            milliDate: parseInt(milliDate/1000)*1000,
+            text: ''
         }
-    },
+        if (milliDate > 0) {
+            calculateTimeLeft(obj, milliDay);
+            if (obj.milliDate > 0) {
+                calculateTimeLeft(obj, milliHr);
+            }
+            if (obj.milliDate > 0) {
+                calculateTimeLeft(obj, milliMin);
+            }
+            if (obj.milliDate > 0) {
+                calculateTimeLeft(obj, milliSec);
+            }
+        }
+        return {
+            milliDate: milliDate,
+            text: obj.text
+        };
+    }
+}
 
-    divineMonth(date, value) {
-        if (date instanceof Date) {
-            if (!isNaN(value)) {
-                date.setMonth(date.getMonth - value)
-            } else {
-                return date;
-            }
-        } else {
-            return null;
+const calculateTimeLeft = (obj, dividerMilli) => {
+    const unitDate = {
+        [24 * 60 * 60 * 1000]: 'วัน',
+        [60 * 60 * 1000]: 'ชั่วโมง',
+        [60 * 1000]: 'นาที',
+        1000: 'วินาที'
+    };
+    const resultValue = parseInt(obj.milliDate / dividerMilli);
+    if (resultValue >= 1) {
+        obj.milliDate = obj.milliDate % dividerMilli;
+        obj.text += `${resultValue} ${unitDate[dividerMilli]} `;
+        if (obj.milliDate === 0) {
+            obj.text = obj.text.trim();
         }
-    },
-
-    divineYear(date, value) {
-        if (date instanceof Date) {
-            if (!isNaN(value)) {
-                date.setFullYear(date.getFullYear - value)
-            } else {
-                return date;
-            }
-        } else {
-            return null;
-        }
-    },
+    }
 }
 
 module.exports = dateUtil;
